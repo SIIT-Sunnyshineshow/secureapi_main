@@ -3,11 +3,13 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+const mongoose = require("mongoose");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 
 var app = express();
+const PORT = process.env.PORT || 3001;
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -38,5 +40,25 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
+
+app.listen(PORT, () => {
+  console.log(`Server is loading on port ${PORT}`);
+  connect_mongo()
+    .then(() => {
+      console.log("MongoDB Connected");
+    })
+    .catch((err) => {
+      console.log("Cannot connect to MongoDB, the details are as follows...");
+      console.log(err);
+    });
+});
+
+async function connect_mongo() {
+  await mongoose.connect(
+    "mongodb+srv://sleeplessless:ysU4MhmG5guBJKk2@cluster0.0xr23ro.mongodb.net/?retryWrites=true&w=majority"
+  );
+
+  // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
+}
 
 module.exports = app;

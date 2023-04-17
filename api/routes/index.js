@@ -8,4 +8,8 @@ router.get("/", function (req, res, next) {
   res.render("index", { title: "Express" });
 });
 
+router.get("/hi", function (req, res, next) {
+  res.send({ message: "Hello" });
+});
+
 module.exports = router;
