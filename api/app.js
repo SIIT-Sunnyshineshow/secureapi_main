@@ -12,6 +12,7 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var projectRouter = require("./routes/project");
 var oauthRouter = require("./routes/oauth");
+var authRouter = require("./routes/auth");
 const { exit } = require("process");
 
 var app = express();
@@ -42,6 +43,7 @@ app.use(function (req, res, next) {
 // Edit Router Overall Here
 app.use("/api/users", usersRouter);
 app.use("/api/project", projectRouter);
+app.use("/api/auth", authRouter);
 app.use("/api/oauth", oauthRouter);
 app.use("/api", indexRouter);
 

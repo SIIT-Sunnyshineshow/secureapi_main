@@ -23,10 +23,10 @@ var userSchema = new Schema({
 
 //Register Password Hash
 userSchema.pre("save", (next) => {
-  if (this.isModified("password")) {
+  if (this.isModified("credentials")) {
     bcrypt.genSalt(10, (err, salt) => {
-      bcrypt.hash(this.password, salt, (err, hash) => {
-        this.password = hash;
+      bcrypt.hash(this.credentials, salt, (err, hash) => {
+        this.credentials = hash;
         next();
       });
     });
@@ -36,14 +36,14 @@ userSchema.pre("save", (next) => {
 });
 
 //Login and check credentials
-userSchema.statics.login = (username, password) => {
+userSchema.statics.login = (username, credentials) => {
   return this.findOne({ username }).then((msg) => {
     if (!msg) {
       return Promise.reject({ code: 400, message: "Invalid Data" });
     }
 
     return new Promise((resolve, reject) => {
-      bcrypt.compare(password, msg.password, (err, res) => {
+      bcrypt.compare(credentials, msg.credentials, (err, res) => {
         if (res) {
           resolve(msg);
         } else {
