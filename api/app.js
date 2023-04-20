@@ -3,7 +3,10 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+var bodyParser = require("body-parser");
+
 const mongoose = require("mongoose");
+var isMongoConnected = false;
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -25,6 +28,10 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 
+//Compile JSON
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
@@ -45,6 +52,7 @@ app.listen(PORT, () => {
   console.log(`Server is loading on port ${PORT}`);
   connect_mongo()
     .then(() => {
+      isMongoConnected = true;
       console.log("MongoDB Connected");
     })
     .catch((err) => {
@@ -55,7 +63,7 @@ app.listen(PORT, () => {
 
 async function connect_mongo() {
   await mongoose.connect(
-    "mongodb+srv://sleeplessless:ysU4MhmG5guBJKk2@cluster0.0xr23ro.mongodb.net/?retryWrites=true&w=majority"
+    "mongodb+srv://sleeplessless:ysU4MhmG5guBJKk2@cluster0.0xr23ro.mongodb.net/somchart?retryWrites=true&w=majority"
   );
 
   // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
