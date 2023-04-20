@@ -10,6 +10,9 @@ var isMongoConnected = false;
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+var projectRouter = require("./routes/project");
+var oauthRouter = require("./routes/oauth");
+const { exit } = require("process");
 
 var app = express();
 const PORT = process.env.PORT || 3001;
@@ -24,9 +27,23 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use(function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Expose-Headers", "x-auth");
+  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With,content-type, Accept , x-auth"
+  );
+
+  next();
+});
+
 // Edit Router Overall Here
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/api/users", usersRouter);
+app.use("/api/project", projectRouter);
+app.use("/api/oauth", oauthRouter);
+app.use("/api", indexRouter);
 
 //Compile JSON
 app.use(bodyParser.json());
@@ -48,18 +65,22 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is loading on port ${PORT}`);
-  connect_mongo()
-    .then(() => {
-      isMongoConnected = true;
-      console.log("MongoDB Connected");
-    })
-    .catch((err) => {
-      console.log("Cannot connect to MongoDB, the details are as follows...");
-      console.log(err);
+require("dotenv").config({ path: "./.env" });
+
+console.log("Connecting MongoDB");
+connect_mongo()
+  .then(() => {
+    isMongoConnected = true;
+    console.log("MongoDB Connected");
+    app.listen(PORT, () => {
+      console.log(`Server is loading on port ${PORT}`);
     });
-});
+  })
+  .catch((err) => {
+    console.log("Cannot connect to MongoDB, the details are as follows...");
+    console.log(err);
+    exit();
+  });
 
 async function connect_mongo() {
   await mongoose.connect(
