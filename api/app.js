@@ -17,6 +17,7 @@ var projectRouter = require("./routes/project");
 var oauthRouter = require("./routes/oauth");
 var authRouter = require("./routes/auth");
 var appapiRouter = require("./routes/applist");
+var secretManager = require("./routes/generator");
 const { exit } = require("process");
 
 var app = express();
@@ -46,6 +47,7 @@ app.use(function (req, res, next) {
 
 // Edit Router Overall Here
 app.use("/api/users", usersRouter);
+app.use("/api/secret", secretManager);
 app.use("/api/project", projectRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/oauth", oauthRouter);
