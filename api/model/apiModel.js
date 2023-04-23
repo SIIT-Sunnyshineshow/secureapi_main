@@ -1,32 +1,25 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-var AppSchema = new Schema({
-  appName: {
+var ApiSchema = new Schema({
+  apiName: {
     type: String,
     required: true,
-    trim: true,
+  },
+  app_id: {
+    type: String,
+    required: true,
   },
   user_id: {
     type: String,
     required: true,
   },
-  loginApi: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  callbackLoginApi: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  apis: [String],
-  attributes: [String],
-  appSecretKey: {
+  apiLink: {
     type: String,
     required: true,
   },
+  apiMethod: {
+    type: String,
+  },
+  allowedAttributes: [String],
 });
-
-module.exports = AppSchema;

@@ -16,6 +16,7 @@ var usersRouter = require("./routes/users");
 var projectRouter = require("./routes/project");
 var oauthRouter = require("./routes/oauth");
 var authRouter = require("./routes/auth");
+var appapiRouter = require("./routes/applist");
 const { exit } = require("process");
 
 var app = express();
@@ -48,6 +49,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/project", projectRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/oauth", oauthRouter);
+app.use("/api/app", appapiRouter);
 app.use("/api", indexRouter);
 
 //Compile JSON

@@ -24,7 +24,7 @@ router.post("/register", function (req, res, next) {
     .save()
     .then((msg) => {
       res.send({ code: 200 });
-      console.log("User Registered: ", data.username);
+      console.log("User Registered: ", msg._id);
     })
     .catch((err) => {
       console.log(err);
@@ -38,6 +38,7 @@ router.post("/login", (req, res, next) => {
   userSchema
     .login(data.username, data.password)
     .then((msg) => {
+      let user_id = msg._id.toString();
       Session.static
         .tokenSign(msg.credentials, data.unique)
         .then((_accessTokens_) => {
@@ -62,6 +63,7 @@ router.post("/login", (req, res, next) => {
                 .then((msg) => {
                   res.send({
                     code: 200,
+                    user_id: user_id,
                     username: data.username,
                     sessionID: sessionID,
                     accessToken: accessTokens.clientAccessToken,

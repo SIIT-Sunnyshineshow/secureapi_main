@@ -1,8 +1,13 @@
 var express = require("express");
 var router = express.Router();
-const Schema = mongoose.Schema;
-const sessionSchema = require("../model/sessionModel");
+const mongoose = require("mongoose");
 var secureHeader = require("../script/secure_headers");
+
+const AppSchema = require("../model/applistModel");
+const AppList = mongoose.model("applist", AppSchema, "applist");
+
+const ApiSchema = require("../model/apiModel");
+const ApiList = mongoose.model("apilist", ApiSchema, "apilist");
 
 /* GET users listing. */
 
@@ -32,12 +37,91 @@ router.get("/test", function (req, res, next) {
 //Foreign App Checker Should be in the decoy app HERE
 //Check the from app, then the scope
 
-router.get("/hello", function (req, res, next) {
-  res.send("Hello");
+router.post("/addapp", (req, res, next) => {
+  let data = req.body;
+
+  let sendingData = new AppList({
+    appName: data.appName,
+    user_id: data.user_id,
+    loginApi: data.loginApi,
+    callbackLoginApi: data.cbLogin,
+    apis: [],
+    attributes: [],
+    appSecretKey: crypto.randomBytes(32).toString("hex"),
+  });
+
+  sendingData.save((err, result) => {
+    if (err) {
+      res.send({ code: 500, err: err });
+    } else {
+      res.send({ code: 200 });
+    }
+  });
 });
 
 router.post("/getapp", (req, res, next) => {
   let data = req.body;
+
+  AppList.find({ user_id: data.user_id }, (err, docs) => {
+    if (err) {
+      res.send({ code: 400, err: err });
+    }
+    res.send({ code: 200, payload: docs });
+  });
+});
+
+router.post("/getoneapp", (req, res, next) => {
+  let data = req.body;
+
+  AppList.find({ _id: new mongoose.Types.ObjectId(data._id) }, (err, docs) => {
+    if (err) {
+      res.send({ code: 400, err: err });
+    }
+    res.send({ code: 200, payload: docs });
+  });
+});
+
+router.post("/addapi", (req, res, next) => {
+  let data = req.body;
+
+  let sendingData = new ApiList({
+    apiName: data.apiName,
+    app_id: data.app_id,
+    user_id: data.user_id,
+    apiLink: data.apiLink,
+    apiMethod: data.apiMethod,
+    allowedAttributes: data.allowedAttributes,
+  });
+
+  sendingData.save((err, result) => {
+    if (err) {
+      res.send({ code: 500, err: err });
+    } else {
+      res.send({ code: 200 });
+    }
+  });
+});
+
+router.post("/getapi", (req, res, next) => {
+  let data = req.body;
+
+  ApiList.find({ user_id: data.user_id, app_id: data.app_id }, (err, docs) => {
+    if (err) {
+      res.send({ code: 400, err: err });
+    }
+    res.send({ code: 200, data: docs });
+  });
+});
+
+router.post("/getoneapi", (req, res, next) => {
+  let data = req.body;
+
+  ApiList.find({ _id: new mongoose.Types.ObjectId(data._id) }, (err, docs) => {
+    if (err) {
+      res.send({ code: 400, err: err });
+    }
+    res.send({ code: 200, data: docs });
+  });
 });
 
 router.get("/", function (req, res, next) {
