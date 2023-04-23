@@ -25,7 +25,8 @@ var userSchema = new Schema({
 userSchema.pre("save", (next) => {
   if (this.isModified("credentials")) {
     bcrypt.genSalt(10, (err, salt) => {
-      bcrypt.hash(this.credentials, salt, (err, hash) => {
+      let rawCred = this.username + this.credentials;
+      bcrypt.hash(rawCred, salt, (err, hash) => {
         this.credentials = hash;
         next();
       });
@@ -53,5 +54,21 @@ userSchema.statics.login = (username, credentials) => {
     });
   });
 };
+
+// userSchema.static.signCredentials = (username, password) => {
+//   let rawCredentials = username + password;
+
+//   bcrypt.getSalt(10, (err, salt) => {
+//     if (err) {
+//       return 0;
+//     }
+//     bcrypt.hash(rawCredentials, salt, (err, hash) => {
+//       if (err) {
+//         return 0;
+//       }
+//       return hash;
+//     });
+//   });
+// };
 
 module.exports = userSchema;

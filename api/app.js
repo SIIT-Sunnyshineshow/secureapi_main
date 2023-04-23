@@ -5,6 +5,9 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var bodyParser = require("body-parser");
 
+const dotenv = require("dotenv");
+dotenv.config();
+
 const mongoose = require("mongoose");
 var isMongoConnected = false;
 

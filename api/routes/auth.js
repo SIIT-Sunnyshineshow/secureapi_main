@@ -1,17 +1,23 @@
 var express = require("express");
 var router = express.Router();
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+require("dotenv").config();
 const mongoose = require("mongoose");
+const { randomUUID } = require("crypto");
 
 const userSchema = require("../model/userModel");
+const sessionSchema = require("../model/sessionModel");
 
-const Credential = mongoose.model("Credentials", userSchema, "Credentials");
+const Credential = mongoose.model("credentials", userSchema, "credentials");
+const Session = mongoose.model("session", sessionSchema, "session");
 
 router.post("/register", function (req, res, next) {
   let data = req.body;
 
   let sendingData = new Credential({
     username: data.username,
-    password: data.password,
+    credentials: data.password,
   });
 
   sendingData
@@ -29,15 +35,52 @@ router.post("/register", function (req, res, next) {
 router.post("/login", (req, res, next) => {
   let data = req.body;
 
-  let sendingData = new Credential({
-    username: data.username,
-    password: data.password,
-  });
-
   userSchema
-    .login(sendingData.username, sendingData.password)
+    .login(data.username, data.password)
     .then((msg) => {
-      res.send({ code: 200 });
+      Session.static
+        .tokenSign(msg.credentials, data.unique)
+        .then((_accessTokens_) => {
+          let accessTokens = _accessTokens_;
+
+          Session.static
+            .refreshSign(msg.credentials, data.unique)
+            .then((_refreshTokens_) => {
+              let refreshTokens = _refreshTokens_;
+              //We might replace this in the future
+              let sessionID = crypto.randomUUID();
+
+              let new_session = new Session({
+                username: data.username,
+                sessionID: sessionID,
+                accessToken: accessTokens.accessToken,
+                refreshToken: refreshTokens.refreshToken,
+              });
+
+              new_session
+                .save()
+                .then((msg) => {
+                  res.send({
+                    code: 200,
+                    username: data.username,
+                    sessionID: sessionID,
+                    accessToken: accessTokens.clientAccessToken,
+                    refreshToken: refreshTokens.clientRefreshToken,
+                  });
+                  console.log("Token Created");
+                })
+                .catch((err) => {
+                  console.log(err);
+                  res.send({ code: 400, err: err });
+                });
+            })
+            .catch((rferr) => {
+              res.send({ code: 400, err: "AccessTokenError", details: rferr });
+            });
+        })
+        .catch((acerr) => {
+          res.send({ code: 400, err: "AccessTokenError", details: acerr });
+        });
     })
     .catch((err) => {
       res.send({ code: 400, err: err });
