@@ -27,6 +27,14 @@ function RegisterPage() {
   return (
     // HTML
     <form onSubmit={handleSubmit}>
+      <h1> Great to see you back! <br/></h1>
+      <h6> <br/>please login with your personal <br/>info </h6>
+      <div>
+      <button onClick={()=> window.location.href= "/login"}> SIGN IN </button>
+      </div>
+
+      <h1> <br/> Create Account</h1>
+    
       <div>
         <label htmlFor="username">Username:</label>
         <input
@@ -54,7 +62,8 @@ function RegisterPage() {
           onChange={handlePasswordChange}
         />
       </div>
-      <button type="submit">Register</button>
+      <br/>
+      <button type="submit">SIGN UP</button>
     </form>
   );
 }

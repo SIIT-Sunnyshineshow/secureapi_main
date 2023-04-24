@@ -8,6 +8,7 @@ import LoginPage from "./Pages/Login";
 import RegisterPage from "./Pages/Register";
 import Dashboard from "./Pages/Dashboard";
 import Home from "./Pages/Home";
+import APIList from "./Pages/APIList";
 import Test from "./Pages/Test";
 
 function App() {
@@ -15,9 +16,10 @@ function App() {
     <BrowserRouter>
       <div className="App">
         <Routes>
-          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/signup" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/APIList" element={<APIList />} />
           <Route path="/test" element={<Test />} />
           <Route
             path="/"
