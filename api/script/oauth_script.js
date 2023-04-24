@@ -8,6 +8,8 @@ const OREFRESH_JWT_SECRET = process.env.OREFRESH_JWT_SECRET;
 const OACCESS_KEY = process.env.OACCESS_KEY;
 const OREFRESH_KEY = process.env.OREFRESH_KEY;
 
+//Appdata contains Attributes and App_id from Database
+
 function generateOAccess(user_id, secret) {
   let iv = crypto.randomBytes(16);
   let cipher = crypto.createCipheriv("aes-256-cbc", OACCESS_KEY, iv);
@@ -66,7 +68,23 @@ function validateORefresh(ORefreshToken, OAccessToken, user_id, appdata, iv) {
     if (rawToken.OAccessToken != OAccessToken) {
       return { code: 403, err: "Invalid uses of refresh token" };
     }
-    //TODO
+
+    let rawSecret = decSecret(rawToken.secret, iv);
+
+    if (
+      rawSecret.app_id != rawToken.app_id ||
+      rawSecret.app_id != appdata.app_id
+    ) {
+      return { code: 403, err: "Forbidden use of application" };
+    }
+
+    for (let i in rawSecret.attributes) {
+      if (!appdata.attributes.includes(i)) {
+        return { code: 403, err: "Forbidden use of permission" };
+      }
+    }
+
+    return { code: 200, secret: rawToken.secret };
   });
 }
 
@@ -117,10 +135,43 @@ function validateOAccess(OAccessToken, user_id, appdata, iv) {
 }
 
 function generateOTokens(user_id, secret) {
-  let OAccessToken = generateOAccess(user_id, secret);
-  let ORefreshToken = generateORefresh(OAccessToken, user_id, secret);
+  let OAccessTokenSet = generateOAccess(user_id, secret);
+  let ORefreshTokenSet = generateORefresh(OAccessToken, user_id, secret);
 
-  return { OAccessToken, ORefreshToken };
+  return { OAccessTokenSet, ORefreshTokenSet };
+}
+
+function checkOTokens(OTokens, appdata, user_id) {
+  let OAccessTokenSet = OTokens.OAccessTokenSet;
+  let ORefreshTokenSet = OTokens.ORefreshTokenSet;
+
+  let res = validateOAccess(
+    OAccessTokenSet.OAccessToken,
+    user_id,
+    appdata,
+    OAccessTokenSet.iv
+  );
+
+  if (res.code == 200) {
+    return { code: 200 };
+  } else if (res.code == 240) {
+    let refres = validateORefresh(
+      ORefreshTokenSet.ORefreshToken,
+      OAccessTokenSet.OAccessToken,
+      user_id,
+      appdata,
+      ORefreshTokenSet.iv
+    );
+
+    if (refres.code == 200) {
+      let tokenSet = generateOTokens(user_id, refres.secret);
+      return { code: 240, tokenSet: tokenSet };
+    } else {
+      return { code: refres.code };
+    }
+  } else {
+    return res;
+  }
 }
 
 module.exports = {
@@ -129,4 +180,5 @@ module.exports = {
   validateOAccess,
   validateORefresh,
   generateOTokens,
+  checkOTokens,
 };

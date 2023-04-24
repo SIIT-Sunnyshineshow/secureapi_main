@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const AppSchema = require("../model/applistModel");
 const ApiSchema = require("../model/apiModel");
 const { decSecret } = require("../script/secret_cbc");
+const { generateOTokens, checkOTokens } = require("../script/oauth_script");
 
 var AppList = mongoose.model("applist", AppSchema, "applist");
 var ApiList = mongoose.model("apilist", ApiSchema, "apilist");
@@ -48,6 +49,50 @@ router.post("/verifypermission", (req, res, next) => {
     }
   });
 });
+
+router.post("/gettokens", (req, res, next) => {
+  let user_id = req.body.user_id;
+  let secret = req.body.permission;
+
+  let OTokens = generateOTokens(user_id, secret);
+  let OAccessTokenSet = OTokens.OAccessTokenSet;
+  let ORefreshTokenSet = OTokens.ORefreshTokenSet;
+  res.send({ code: 200, OAccessTokenSet, ORefreshTokenSet });
+});
+
+router.post("/checktokens", (req, res, next) => {
+  /* Incoming will be...
+  {
+    OAccessTokenSet : {
+      OAccessToken
+      iv
+    },
+    ORefreshTokenSet : {
+      ORefresh,
+      iv
+    },
+    user_id,
+    app_id
+  }
+  */
+  AppList.findOne({ _id: mongoose.Types.ObjectId(app_id) }, (err, docs) => {
+    let appdata = {
+      app_id: app_id,
+      attributes: docs.attributes,
+    };
+
+    let OTokens = {
+      OAccessTokenSet: req.body.OAccessTokenSet,
+      ORefreshTokenSet: req.body.ORefreshTokenSet,
+    };
+
+    let sendingData = checkOTokens(OTokens, appdata, user_id);
+
+    res.send(sendingData);
+  });
+});
+
+//API Execution Set
 
 router.get("/test", function (req, res, next) {
   res.send("OAuth API");
