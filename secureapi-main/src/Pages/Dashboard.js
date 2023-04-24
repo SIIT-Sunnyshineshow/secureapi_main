@@ -1,20 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { Row, Col, Container, Card } from "react-bootstrap";
-
+const axios = require("axios");
 
 function Dashboard() {
-  useEffect (()=>{
+  useEffect(() => {
     let user_id = localStorage.getItem("userID");
-    let headers = { accessToken: localStorage.getItem("accessToken"), refreshToken: localStorage.getItem("refreshToken"), iv: localStorage.getItem("iv"), unique: localStorage.getItem("unique")};
-    axios.post('http://localhost:3001/api/getapp', user_id, { headers: headers })
-    .then(response => {
-      console.log('Received response:', response.data);
-    })
-    .catch(error => {
-      console.error('Error sending request:', error);
-    });
-  
-  })
+    let headers = {
+      accessToken: localStorage.getItem("accessToken"),
+      refreshToken: localStorage.getItem("refreshToken"),
+      iv: localStorage.getItem("iv"),
+      unique: localStorage.getItem("unique"),
+    };
+    axios
+      .post("http://localhost:3001/api/getapp", user_id, { headers: headers })
+      .then((response) => {
+        console.log("Received response:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error sending request:", error);
+      });
+  });
   const [appList, setAppList] = useState(["A", "B", "C"]);
   return (
     <div style={{ padding: "10px" }}>

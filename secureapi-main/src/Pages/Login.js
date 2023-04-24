@@ -1,66 +1,59 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { v4 as uuidv4 } from 'uuid';
-import { useEffect } from 'react';
-
-
-let uniqueId = localStorage.getItem('uniqueId');
-if (!uniqueId) {
-  uniqueId = uuidv4();
-  localStorage.setItem('uniqueId', uniqueId);
-}
+import { v4 as uuidv4 } from "uuid";
+import { useEffect } from "react";
 
 const crypto = require("crypto");
-const [username, setUsername] = useState("");
-const [password, setPassword] = useState("");
-
-const loginfn = () => {
-  //validate check whether all the form is completed
-  if (!username) {
-    console.log("Please fill in the username");
-    return;
-  }
-
-  if (!password) {
-    console.log("Please fill in the password");
-    return;
-  }
-
-  //hash password
-  let raw_pass = password;
-  // Generate a SHA-256 hash of the password
-  const hashedPassword = crypto
-    .createHash("sha256")
-    .update(raw_pass)
-    .digest("hex");
-  //console.log('Hashed password:', hashedPassword);
-
-  //axios post backend send to the backendman aka sunny
-  // Make a POST request to the backend with the request body and headers using Axios
-  axios
-    .post("http://localhost:3001/api/login", {
-      username: username,
-      credentials: hashedPassword,
-      unique: uniqueId,
-    })
-    .then((response) => {
-      if (response.data.code == 200) {
-        //Something to save tokens and redirect
-        localStorage.setItem('accessToken', response.data.accessToken);
-        localStorage.setItem('refreshToken', response.data.refreshToken);
-        localStorage.setItem('sessionID ', response.data.sessionID );
-        localStorage.setItem('userId ', response.data.userId );
-        window.location.replace("/dashboard");
-      }
-
-
-    })
-    .catch((error) => {
-      console.log("Login failed, please try again");
-    });
-};
 
 function LoginPage() {
+  const loginfn = () => {
+    //validate check whether all the form is completed
+    if (!username) {
+      console.log("Please fill in the username");
+      return;
+    }
+
+    if (!password) {
+      console.log("Please fill in the password");
+      return;
+    }
+
+    //hash password
+    let raw_pass = password;
+    // Generate a SHA-256 hash of the password
+    const hashedPassword = crypto
+      .createHash("sha256")
+      .update(raw_pass)
+      .digest("hex");
+    //console.log('Hashed password:', hashedPassword);
+
+    //axios post backend send to the backendman aka sunny
+    // Make a POST request to the backend with the request body and headers using Axios
+    axios
+      .post("http://localhost:3001/api/login", {
+        username: username,
+        credentials: hashedPassword,
+        unique: uniqueId,
+      })
+      .then((response) => {
+        if (response.data.code == 200) {
+          //Something to save tokens and redirect
+          localStorage.setItem("accessToken", response.data.accessToken);
+          localStorage.setItem("refreshToken", response.data.refreshToken);
+          localStorage.setItem("sessionID ", response.data.sessionID);
+          localStorage.setItem("userId ", response.data.userId);
+          window.location.replace("/dashboard");
+        }
+      })
+      .catch((error) => {
+        console.log("Login failed, please try again");
+      });
+  };
+  let uniqueId = localStorage.getItem("uniqueId");
+  if (!uniqueId) {
+    uniqueId = uuidv4();
+    localStorage.setItem("uniqueId", uniqueId);
+  }
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 

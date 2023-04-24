@@ -44,5 +44,8 @@
   },
   "devDependencies": {
     "react-router-dom": "^6.10.0"
+  },
+  "browser" : {
+    "crypto" : false
   }
 }
