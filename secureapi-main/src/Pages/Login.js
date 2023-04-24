@@ -3,10 +3,12 @@ import React, { useState } from "react";
 function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [Email, setEmail] = useState("");
 
-  function handleUsernameChange(event) {
-    setUsername(event.target.value);
+  function handleEmailChange(event){
+    setEmail(event.target.value);
   }
+
 
   function handlePasswordChange(event) {
     setPassword(event.target.value);
@@ -14,19 +16,20 @@ function LoginPage() {
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(`Username: ${username} Password: ${password}`);
+    console.log(`Email: ${Email} Password: ${password}`);
   }
 
   return (
     <form onSubmit={handleSubmit}>
+      <h1> Sign in to the application </h1>
       <div>
-        <label htmlFor="username">Username:</label>
-        <input
-          type="text"
-          id="username"
-          value={username}
-          onChange={handleUsernameChange}
+        <label htmlFor="Email">Email:</label>
+        <input type="text" 
+        id="Email" 
+        value={Email} 
+        onChange={handleEmailChange} 
         />
+
       </div>
       <div>
         <label htmlFor="password">Password:</label>
@@ -37,7 +40,19 @@ function LoginPage() {
           onChange={handlePasswordChange}
         />
       </div>
-      <button type="submit">Log In</button>
+      <div>
+      <a href="" target="_blank">Forget your password?</a>
+      </div>
+      <button type="Signin">SIGN IN</button>
+
+      <h1> <br/> Nice to meet you! </h1>
+      <h6> tell us a little bit about yourself <br/></h6>
+      <h6> and start journey with us</h6>
+      <div>
+      <button type="Signup">SIGN UP</button>
+      </div>
+
+
     </form>
   );
 }
