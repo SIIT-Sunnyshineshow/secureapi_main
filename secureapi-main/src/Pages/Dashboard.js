@@ -19,7 +19,9 @@ function Dashboard() {
       .catch((error) => {
         console.error("Error sending request:", error);
       });
-  });
+  
+      
+    });
   const [appList, setAppList] = useState(["A", "B", "C"]);
   return (
     <div style={{ padding: "10px" }}>
@@ -33,7 +35,9 @@ function Dashboard() {
               <Col>
                 {" "}
                 <Card>
-                  <Card.Body>This is an application card</Card.Body>
+                  <button>
+                  <Card.Body> App Name:{item.appName}</Card.Body>
+                  </button>
                 </Card>
               </Col>
             </Row>

@@ -9,7 +9,9 @@ import RegisterPage from "./Pages/Register";
 import Dashboard from "./Pages/Dashboard";
 import Home from "./Pages/Home";
 import APIList from "./Pages/APIList";
+import APIEdit from "./Pages/APIEdit";
 import Test from "./Pages/Test";
+
 
 function App() {
   return (
@@ -20,6 +22,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/APIList" element={<APIList />} />
+          <Route path="/APIEdit" element={<APIEdit />} />
           <Route path="/test" element={<Test />} />
           <Route
             path="/"
