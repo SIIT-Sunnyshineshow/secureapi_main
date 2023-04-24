@@ -1,8 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { v4 as uuidv4 } from 'uuid';
+import { useEffect } from 'react';
+
+
+let uniqueId = localStorage.getItem('uniqueId');
+if (!uniqueId) {
+  uniqueId = uuidv4();
+  localStorage.setItem('uniqueId', uniqueId);
+}
 
 const crypto = require("crypto");
-
 const [username, setUsername] = useState("");
 const [password, setPassword] = useState("");
 
@@ -33,11 +41,19 @@ const loginfn = () => {
     .post("http://localhost:3001/api/login", {
       username: username,
       credentials: hashedPassword,
+      unique: uniqueId,
     })
     .then((response) => {
       if (response.data.code == 200) {
         //Something to save tokens and redirect
+        localStorage.setItem('accessToken', response.data.accessToken);
+        localStorage.setItem('refreshToken', response.data.refreshToken);
+        localStorage.setItem('sessionID ', response.data.sessionID );
+        localStorage.setItem('userId ', response.data.userId );
+        window.location.replace("/dashboard");
       }
+
+
     })
     .catch((error) => {
       console.log("Login failed, please try again");
