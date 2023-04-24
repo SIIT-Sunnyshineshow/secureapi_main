@@ -1,5 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from 'react';
 import { Row, Col, Container, Card } from "react-bootstrap";
+
+useEffect (()=>{
+  let user_id = localStorage.getItem("userID");
+  let headers = { accessToken: localStorage.getItem("accessToken"), refreshToken: localStorage.getItem("refreshToken"), iv: localStorage.getItem("iv"), unique: localStorage.getItem("unique")};
+  axios.post(user_id, { headers: headers })
+  .then(response => {
+    console.log('Received response:', response.data);
+  })
+  .catch(error => {
+    console.error('Error sending request:', error);
+  });
+
+})
+
 
 function Dashboard() {
   const [appList, setAppList] = useState(["A", "B", "C"]);
