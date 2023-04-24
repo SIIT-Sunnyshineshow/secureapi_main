@@ -1,4 +1,57 @@
 import React, { useState } from "react";
+import axios from "axios";
+
+const crypto = require("crypto");
+
+const [username, setUsername] = useState("");
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+
+const loginfn = () => {
+  //validate check whether all the form is completed
+  if (!username) {
+    console.log("Please fill in the username");
+    return;
+  }
+
+  if (!email) {
+    console.log("Please fill in the email");
+    return;
+  }
+
+  if (!password) {
+    console.log("Please fill in the password");
+    return;
+  }
+
+  //hash password
+  let raw_pass = password;
+  // Generate a SHA-256 hash of the password
+  const hashedPassword = crypto
+    .createHash("sha256")
+    .update(raw_pass)
+    .digest("hex");
+  //console.log('Hashed password:', hashedPassword);
+
+  //axios post backend send to the backendman aka sunny
+  // Make a POST request to the backend with the request body and headers using Axios
+  axios
+    .post("http://localhost:3001/api/login", {
+      username: username,
+      email: email,
+      credentials: hashedPassword,
+    })
+    .then((response) => {
+      if (response.data.code == 200) {
+        //Something to save tokens and redirect
+      }
+    })
+    .catch((error) => {
+      console.log("Login failed, please try again");
+    });
+};
+
+
 
 function RegisterPage() {
   const [username, setUsername] = useState("");
