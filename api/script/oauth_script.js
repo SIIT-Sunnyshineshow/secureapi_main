@@ -41,12 +41,46 @@ function generateORefresh(OAccessToken, user_id, secret) {
   });
 }
 
-function validateOAccess(OAccessToken, user_id) {
+function validateORefresh(ORefreshToken, OAccessToken, user_id, appdata, iv) {
+  if (!ORefreshToken) {
+    return { code: 401, err: "Please Login Again" };
+  }
+  jwt.verify(ORefreshToken, OREFRESH_JWT_SECRET, (err, payload) => {
+    if (err) {
+      return { code: 401, err: "Please Login Again" };
+    }
+    let decipher = crypto.createDecipheriv(
+      "aes-256-cbc",
+      OREFRESH_KEY,
+      payload.iv
+    );
+    let decrypted = decipher.update(payload.ORefreshToken, "hex", "utf8");
+    decrypted += decipher.final("utf8");
+
+    let rawToken = JSON.parse(decrypted);
+
+    if (rawToken.user_id != user_id) {
+      return { code: 401, err: "Who are you?" };
+    }
+
+    if (rawToken.OAccessToken != OAccessToken) {
+      return { code: 403, err: "Invalid uses of refresh token" };
+    }
+    //TODO
+  });
+}
+
+function validateOAccess(OAccessToken, user_id, appdata, iv) {
   //Valid?
+  if (!OAccessToken) {
+    return { code: 401, err: "Please Login Again" };
+  }
   jwt.verify(OAccessToken, OACCESS_JWT_SECRET, (err, payload) => {
     if (err) {
       //Validate ORefresh
       //if it's available, Refresh the Token
+      //Duty of Express
+      return { code: 240 };
     }
 
     let decipher = crypto.createDecipheriv(
@@ -63,8 +97,28 @@ function validateOAccess(OAccessToken, user_id) {
       return { code: 401, err: "Who are you?" };
     }
 
-    return decSecret();
-  });
+    let rawSecret = decSecret(rawToken.secret, iv);
 
-  //Match?
+    if (
+      rawSecret.app_id != rawToken.app_id ||
+      rawSecret.app_id != appdata.app_id
+    ) {
+      return { code: 403, err: "Forbidden use of application" };
+    }
+
+    for (let i in rawSecret.attributes) {
+      if (!appdata.attributes.includes(i)) {
+        return { code: 403, err: "Forbidden use of permission" };
+      }
+    }
+
+    return { code: 200 };
+  });
+}
+
+function generateOTokens(user_id, secret) {
+  let OAccessToken = generateOAccess(user_id, secret);
+  let ORefreshToken = generateORefresh(OAccessToken, user_id, secret);
+
+  return { OAccessToken, ORefreshToken };
 }
