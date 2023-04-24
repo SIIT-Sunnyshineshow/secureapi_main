@@ -36,7 +36,7 @@ const loginfn = () => {
   //axios post backend send to the backendman aka sunny
   // Make a POST request to the backend with the request body and headers using Axios
   axios
-    .post("http://localhost:3001/api/login", {
+    .post("http://localhost:3001/api/register", {
       username: username,
       email: email,
       credentials: hashedPassword,
