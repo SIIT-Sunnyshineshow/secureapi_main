@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Row, Col, Container, Card } from "react-bootstrap";
-const axios = require("axios");
+import axios from "axios";
 
 function Dashboard() {
   useEffect(() => {

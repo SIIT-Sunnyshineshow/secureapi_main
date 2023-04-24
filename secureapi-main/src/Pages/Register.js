@@ -17,6 +17,43 @@ function RegisterPage() {
     }
 
     //TODO Password Validate
+    function PasswordForm() {
+      const [password, setPassword] = useState('');
+      const [confirmPassword, setConfirmPassword] = useState('');
+    
+      const handleSubmit = (event) => {
+        event.preventDefault();
+    
+        if (password !== confirmPassword) {
+          alert('The Passwords is not match. Please try again.');
+        } 
+
+        
+      };
+    
+      return (
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
+          <label htmlFor="confirm-password">Confirm Password:</label>
+      <input
+        type="password"
+        id="confirm-password"
+        value={confirmPassword}
+        onChange={(event) => setConfirmPassword(event.target.value)}
+      />
+
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+    
+
 
     //hash password
     let raw_pass = password;
