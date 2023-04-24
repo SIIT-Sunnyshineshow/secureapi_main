@@ -22,12 +22,13 @@ var userSchema = new Schema({
 });
 
 //Register Password Hash
-userSchema.pre("save", (next) => {
+userSchema.pre("save", function (next) {
   if (this.isModified("credentials")) {
     bcrypt.genSalt(10, (err, salt) => {
       let rawCred = this.username + this.credentials;
       bcrypt.hash(rawCred, salt, (err, hash) => {
         this.credentials = hash;
+        //console.log("LOGINPASS: " + hash);
         next();
       });
     });
@@ -37,18 +38,30 @@ userSchema.pre("save", (next) => {
 });
 
 //Login and check credentials
-userSchema.statics.login = (username, credentials) => {
+//This kind of function definition is a must
+//Arrow function might cause problems in function definition
+userSchema.statics.login = function (username, credentials) {
+  if (!username) {
+    return Promise.reject({ code: 400, message: "Invalid Username" });
+  }
+
+  if (!credentials) {
+    return Promise.reject({ code: 400, message: "Invalid Credential" });
+  }
   return this.findOne({ username }).then((msg) => {
     if (!msg) {
+      console.log("LOGIN -> Invalid Data in Database");
       return Promise.reject({ code: 400, message: "Invalid Data" });
     }
 
     return new Promise((resolve, reject) => {
-      bcrypt.compare(credentials, msg.credentials, (err, res) => {
+      //console.log(credentials + " " + msg.credentials);
+      bcrypt.compare(username + credentials, msg.credentials, (err, res) => {
+        //console.log(res);
         if (res) {
           resolve(msg);
         } else {
-          reject();
+          reject({ code: 400, err: "Bcrypt imcomparable" });
         }
       });
     });

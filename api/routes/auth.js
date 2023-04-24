@@ -13,11 +13,12 @@ const Credential = mongoose.model("credentials", userSchema, "credentials");
 const Session = mongoose.model("session", sessionSchema, "session");
 
 router.post("/register", function (req, res, next) {
+  // Username, Password
   let data = req.body;
 
   let sendingData = new Credential({
     username: data.username,
-    credentials: data.password,
+    credentials: data.credentials,
   });
 
   sendingData
@@ -34,26 +35,25 @@ router.post("/register", function (req, res, next) {
 
 router.post("/login", (req, res, next) => {
   let data = req.body;
+  const session = new Session();
 
-  userSchema
-    .login(data.username, data.password)
+  Credential.login(data.username, data.credentials)
     .then((msg) => {
+      //console.log(msg);
       let user_id = msg._id.toString();
-      Session.static
-        .tokenSign(msg.credentials, data.unique)
+      Session.tokenSign(msg.credentials, data.unique)
         .then((_accessTokens_) => {
           let accessTokens = _accessTokens_;
 
-          Session.static
-            .refreshSign(
-              accessTokens.clientAccessToken,
-              msg.credentials,
-              data.unique
-            )
+          Session.refreshSign(
+            accessTokens.clientAccessToken,
+            msg.credentials,
+            data.unique
+          )
             .then((_refreshTokens_) => {
               let refreshTokens = _refreshTokens_;
               //We might replace this in the future
-              let sessionID = crypto.randomUUID();
+              let sessionID = randomUUID();
 
               let new_session = new Session({
                 username: data.username,
@@ -77,18 +77,22 @@ router.post("/login", (req, res, next) => {
                 })
                 .catch((err) => {
                   console.log(err);
+                  console.log("Err section A");
                   res.send({ code: 400, err: err });
                 });
             })
             .catch((rferr) => {
+              console.log("Err section B");
               res.send({ code: 400, err: "AccessTokenError", details: rferr });
             });
         })
         .catch((acerr) => {
+          console.log("Err section C");
           res.send({ code: 400, err: "AccessTokenError", details: acerr });
         });
     })
     .catch((err) => {
+      console.log("Err section D");
       res.send({ code: 400, err: err });
     });
 });

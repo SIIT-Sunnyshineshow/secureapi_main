@@ -7,11 +7,17 @@ const crypto = require("crypto");
 const AppSchema = require("../model/applistModel");
 const AppList = mongoose.model("applist", AppSchema, "applist");
 
-const ApiSchema = require("../model/apiModel");
-const ApiList = mongoose.model("apilist", ApiSchema, "apilist");
+// const ApiSchema = require("../model/apiModel");
+// const ApiList = mongoose.model("apilist", ApiSchema, "apilist");
 
 /* GET users listing. */
+/*
+Requirement for headers
+accessToken,
+refreshToken,
+sessionID
 
+*/
 router.use((req, res, next) => {
   secureHeader(req, res, next)
     .then((payload) => {
@@ -124,6 +130,10 @@ router.post("/getoneapi", (req, res, next) => {
     }
     res.send({ code: 200, data: docs });
   });
+});
+
+router.get("/test", (req, res, next) => {
+  res.send("APP LIST API");
 });
 
 router.get("/", function (req, res, next) {

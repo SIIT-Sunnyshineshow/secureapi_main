@@ -5,17 +5,19 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 const sessionSchema = require("../model/sessionModel");
+const Session = mongoose.model("session", sessionSchema, "session");
 
 //Header Checker
 function secureHeader(req, res, next) {
-  return Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     //Check Access Token
     //Redirect to login page for 403
-    let clientAccessToken = req.headers.accessToken;
-    let clientRefreshToken = req.headers.refreshToken;
-    let sessionID = req.headers.sessionID;
+    let clientAccessToken = req.headers.accesstoken;
+    let clientRefreshToken = req.headers.refreshtoken;
+    let sessionID = req.headers.sessionid;
+
+    //console.log(req);
 
     if (!sessionID) {
       reject({ code: 403, err: "No Session ID detected" });
@@ -27,15 +29,13 @@ function secureHeader(req, res, next) {
       reject({ code: 403, err: "No Refresh Token detected" });
     }
 
-    sessionSchema
-      .loadAccess(sessionID, clientAccessToken)
+    Session.loadAccess(sessionID, clientAccessToken)
       .then((acres) => {
         resolve({ code: 200 });
       })
       //Abnormal access token
       .catch((err) => {
-        sessionSchema
-          .loadRefresh(sessionID, clientRefreshToken, clientAccessToken)
+        Session.loadRefresh(sessionID, clientRefreshToken, clientAccessToken)
           .then((rfres) => {
             //JWT Decode
             jwt.verify(
@@ -48,13 +48,11 @@ function secureHeader(req, res, next) {
                     err: "Abnormal Refresh Token or expires",
                   });
                 }
-                sessionSchema
-                  .tokenSign(payload.credentials, payload.unique)
+                Session.tokenSign(payload.credentials, payload.unique)
                   .then((_accessTokens_) => {
                     let accessTokens = _accessTokens_;
 
-                    sessionSchema
-                      .refreshSign(payload.credentials, payload.unique)
+                    Session.refreshSign(payload.credentials, payload.unique)
                       .then((_refreshTokens_) => {
                         let refreshTokens = _refreshTokens_;
 
@@ -65,8 +63,7 @@ function secureHeader(req, res, next) {
                           refreshToken: refreshTokens.refreshToken,
                         };
 
-                        sessionSchema
-                          .findOneAndUpdate(filter, update)
+                        Session.findOneAndUpdate(filter, update)
                           .then((res) => {
                             resolve({
                               code: 240,

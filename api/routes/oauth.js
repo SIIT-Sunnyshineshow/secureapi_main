@@ -1,4 +1,4 @@
-import axios from "axios";
+const { axios } = require("axios");
 var express = require("express");
 var router = express.Router();
 const mongoose = require("mongoose");

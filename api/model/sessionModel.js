@@ -38,7 +38,7 @@ var sessionSchema = new Schema({
 });
 
 //Used to sign token, saving token is the job of API
-sessionSchema.static.tokenSign = (credentials, unique) => {
+sessionSchema.statics.tokenSign = function (credentials, unique) {
   let clientAccessToken = jwt.sign(
     { credentials, unique },
     process.env.TOKEN_SECRET,
@@ -63,7 +63,11 @@ sessionSchema.static.tokenSign = (credentials, unique) => {
 };
 
 //Used to sign token, saving token is the job of API
-sessionSchema.static.refreshSign = (accessToken, credentials, unique) => {
+sessionSchema.statics.refreshSign = function (
+  accessToken,
+  credentials,
+  unique
+) {
   let randomNum = randomUUID();
   let clientRefreshToken = jwt.sign(
     { accessToken, credentials, randomNum, unique },
@@ -89,20 +93,24 @@ sessionSchema.static.refreshSign = (accessToken, credentials, unique) => {
 
 //Check if the token is valid
 //Logical Problem
-sessionSchema.static.loadAccess = (sessionID, clientAccessToken) => {
+sessionSchema.statics.loadAccess = function (sessionID, clientAccessToken) {
   //Valid?
-  jwt.verify(clientAccessToken, process.env.TOKEN_SECRET, (err, payload) => {
-    if (err) {
-      return Promise.reject({ code: 400, message: "Invalid Token", err: err });
-    }
-    //Have?
-    return this.findOne({ sessionID }).then((msg) => {
-      if (!msg) {
-        return Promise.reject({ code: 400, message: "Invalid Data" });
+  return new Promise((resolve, reject) => {
+    jwt.verify(clientAccessToken, process.env.TOKEN_SECRET, (err, payload) => {
+      if (err) {
+        reject({
+          code: 400,
+          message: "Invalid Token",
+          err: err,
+        });
       }
+      //Have?
+      return this.findOne({ sessionID }).then((msg) => {
+        if (!msg) {
+          reject({ code: 400, message: "Invalid Data" });
+        }
 
-      //Match?
-      return new Promise((resolve, reject) => {
+        //Match?
         let accessToken = msg.accessToken;
         bcrypt.compare(clientAccessToken, accessToken, (err, ret) => {
           if (err) {
@@ -119,28 +127,28 @@ sessionSchema.static.loadAccess = (sessionID, clientAccessToken) => {
   });
 };
 
-sessionSchema.static.loadRefresh = (
+sessionSchema.statics.loadRefresh = function (
   sessionID,
   clientRefreshToken,
   clientAccessToken
-) => {
+) {
   //Valid?
-  jwt.verify(clientRefreshToken, process.env.TOKEN_SECRET, (err, payload) => {
-    if (err) {
-      return { code: 400, message: "Invalid Token", err: err };
-    }
-
-    if (payload.clientAccessToken != clientAccessToken) {
-      return { code: 400, message: "Invalid Refresh", err: err };
-    }
-    //Have?
-    return this.findOne({ sessionID }).then((msg) => {
-      if (!msg) {
-        return Promise.reject({ code: 400, message: "Invalid Data" });
+  return new Promise((resolve, reject) => {
+    jwt.verify(clientRefreshToken, process.env.TOKEN_SECRET, (err, payload) => {
+      if (err) {
+        reject({ code: 400, message: "Invalid Token", err: err });
       }
 
-      //Match?
-      return new Promise((resolve, reject) => {
+      if (payload.clientAccessToken != clientAccessToken) {
+        reject({ code: 400, message: "Invalid Refresh", err: err });
+      }
+      //Have?
+      return this.findOne({ sessionID }).then((msg) => {
+        if (!msg) {
+          reject({ code: 400, message: "Invalid Data" });
+        }
+
+        //Match?
         let refreshToken = msg.refreshToken;
         bcrypt.compare(clientRefreshToken, refreshToken, (err, ret) => {
           if (err) {
