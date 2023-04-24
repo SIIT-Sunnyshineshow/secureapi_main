@@ -122,3 +122,11 @@ function generateOTokens(user_id, secret) {
 
   return { OAccessToken, ORefreshToken };
 }
+
+module.exports = {
+  generateOAccess,
+  generateORefresh,
+  validateOAccess,
+  validateORefresh,
+  generateOTokens,
+};
