@@ -165,7 +165,7 @@ function checkOTokens(OTokens, appdata, user_id) {
 
     if (refres.code == 200) {
       let tokenSet = generateOTokens(user_id, refres.secret);
-      return { code: 240, tokenSet: tokenSet };
+      return { code: 240, tokenSet: tokenSet, secret: refres.secret };
     } else {
       return { code: refres.code };
     }

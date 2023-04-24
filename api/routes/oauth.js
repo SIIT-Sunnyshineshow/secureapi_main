@@ -1,3 +1,4 @@
+import axios from "axios";
 var express = require("express");
 var router = express.Router();
 const mongoose = require("mongoose");
@@ -94,7 +95,82 @@ router.post("/checktokens", (req, res, next) => {
 
 //API Execution Set
 router.get("/oapi/get/:apiid", (req, res, next) => {
-  let apiid = req.params.apiid;
+  /* Required from users
+  headers: OAccessToken, ORefreshToken, Aiv, Riv, app_id, user_id
+
+   */
+
+  let OAccessToken = req.headers.OAccessToken;
+  let ORefreshToken = req.headers.ORefreshToken;
+  let Aiv = req.headers.aiv;
+  let Riv = req.headers.Riv;
+  let app_id = req.headers.app_id;
+  let user_id = req.headers.user_id;
+
+  let OAccessTokenSet = { OAccessToken, iv: Aiv };
+  let ORefreshTokenSet = { ORefreshToken, iv: Riv };
+
+  AppList.findOne({ _id: mongoose.Types.ObjectId(app_id) }, (err, docs) => {
+    if (err) {
+      res.send({ code: 400, err: err });
+    }
+
+    let appdata = {
+      app_id: app_id,
+      attributes: docs.attributes,
+    };
+
+    let OTokens = {
+      OAccessTokenSet,
+      ORefreshTokenSet,
+    };
+
+    let sendingData = checkOTokens(OTokens, appdata, user_id);
+
+    if (sendingData.code == 240) {
+      OTokens = sendingData.tokenSet;
+
+      OAccessToken = OTokens.OAccessTokenSet.OAccessToken;
+      ORefreshToken = OTokens.ORefreshTokenSet.ORefreshToken;
+      Aiv = OTokens.OAccessTokenSet.iv;
+      Riv = OTokens.ORefreshTokenSet.iv;
+
+      res.set({
+        changeToken: "240",
+        OAccessToken: OAccessToken,
+        ORefreshToken: ORefreshToken,
+        Aiv: Aiv,
+        Riv: Riv,
+      });
+    } else if (sendingData.code != 200) {
+      res.send(sendingData);
+    }
+
+    //API actual fetch
+    let apiid = req.params.apiid;
+
+    ApiList.findOne({ apiLink: apiid }, (err, docs) => {
+      let api_link = docs.apiPriLink;
+      let secret = sendingData.secret;
+
+      let apiAttributes = decSecret(secret);
+
+      for (let i in docs.allowedAttributes) {
+        if (!apiAttributes.includes(i)) {
+          res.send({ code: 403, err: "Invalid Permission" });
+        }
+      }
+
+      axios
+        .get(api_link)
+        .then((response) => {
+          res.send({ code: 200, data: response.data });
+        })
+        .catch((error) => {
+          res.send({ code: 400, err: error });
+        });
+    });
+  });
 });
 
 router.get("/test", function (req, res, next) {
