@@ -9,12 +9,12 @@ const [password, setPassword] = useState("");
 const loginfn = () => {
   //validate check whether all the form is completed
   if (!username) {
-    console.log("Please fill username");
+    console.log("Please fill in the username");
     return;
   }
 
   if (!password) {
-    console.log("Please fill password");
+    console.log("Please fill in the password");
     return;
   }
 
