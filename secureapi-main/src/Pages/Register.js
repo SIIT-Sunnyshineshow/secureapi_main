@@ -25,6 +25,7 @@ function RegisterPage() {
   }
 
   return (
+    // HTML
     <form onSubmit={handleSubmit}>
       <div>
         <label htmlFor="username">Username:</label>
