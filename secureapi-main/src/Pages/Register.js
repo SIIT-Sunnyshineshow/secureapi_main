@@ -44,6 +44,8 @@ const loginfn = () => {
     .then((response) => {
       if (response.data.code == 200) {
         //Something to save tokens and redirect
+       
+          window.location.replace("/login");
       }
     })
     .catch((error) => {
