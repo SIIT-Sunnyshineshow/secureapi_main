@@ -63,10 +63,10 @@ sessionSchema.static.tokenSign = (credentials, unique) => {
 };
 
 //Used to sign token, saving token is the job of API
-sessionSchema.static.refreshSign = (credentials, unique) => {
+sessionSchema.static.refreshSign = (accessToken, credentials, unique) => {
   let randomNum = randomUUID();
   let clientRefreshToken = jwt.sign(
-    { credentials, randomNum, unique },
+    { accessToken, credentials, randomNum, unique },
     process.env.REFRESH_SECRET,
     { expiresIn: "7d" }
   );
@@ -119,11 +119,19 @@ sessionSchema.static.loadAccess = (sessionID, clientAccessToken) => {
   });
 };
 
-sessionSchema.static.loadRefresh = (sessionID, clientRefreshToken) => {
+sessionSchema.static.loadRefresh = (
+  sessionID,
+  clientRefreshToken,
+  clientAccessToken
+) => {
   //Valid?
   jwt.verify(clientRefreshToken, process.env.TOKEN_SECRET, (err, payload) => {
     if (err) {
       return { code: 400, message: "Invalid Token", err: err };
+    }
+
+    if (payload.clientAccessToken != clientAccessToken) {
+      return { code: 400, message: "Invalid Refresh", err: err };
     }
     //Have?
     return this.findOne({ sessionID }).then((msg) => {

@@ -32,9 +32,10 @@ function secureHeader(req, res, next) {
       .then((acres) => {
         resolve({ code: 200 });
       })
+      //Abnormal access token
       .catch((err) => {
-        sessionSchema.static
-          .loadRefresh(sessionID, clientRefreshToken)
+        sessionSchema
+          .loadRefresh(sessionID, clientRefreshToken, clientAccessToken)
           .then((rfres) => {
             //JWT Decode
             jwt.verify(

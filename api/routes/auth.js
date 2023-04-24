@@ -45,7 +45,11 @@ router.post("/login", (req, res, next) => {
           let accessTokens = _accessTokens_;
 
           Session.static
-            .refreshSign(msg.credentials, data.unique)
+            .refreshSign(
+              accessTokens.clientAccessToken,
+              msg.credentials,
+              data.unique
+            )
             .then((_refreshTokens_) => {
               let refreshTokens = _refreshTokens_;
               //We might replace this in the future

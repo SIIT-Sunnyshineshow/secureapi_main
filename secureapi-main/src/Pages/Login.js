@@ -1,66 +1,56 @@
 import React, { useState } from "react";
-import axios from 'axios';
+import axios from "axios";
 
-const crypto = require('crypto');
+const crypto = require("crypto");
 
 const [username, setUsername] = useState("");
 const [password, setPassword] = useState("");
 
-
-
-const loginfn = ()=>{
+const loginfn = () => {
   //validate check whether all the form is completed
-  function handleSubmit(event) {
-    event.preventDefault();
+  if (!username) {
+    console.log("Please fill username");
+    return;
+  }
 
-    // Check if all the required fields have been filled in
-    if (formData.username && formData.password) {
-      // All required fields have been filled in - submit the form
-      console.log('Submitting form:', formData);
-    } else {
-      // Required fields are missing - show an error message
-      console.log('All fields are required');
-    }
+  if (!password) {
+    console.log("Please fill password");
+    return;
   }
 
   //hash password
-const crypto = require('crypto');
-  // Define the plaintext password
-  //const password = 'my password';
-    // Generate a SHA-256 hash of the password
-  const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
-  console.log('Hashed password:', hashedPassword);
-    // Hash the message using SHA256
-  const hash = crypto.createHash('sha256').update(message).digest('hex');
+  let raw_pass = password;
+  // Generate a SHA-256 hash of the password
+  const hashedPassword = crypto
+    .createHash("sha256")
+    .update(raw_pass)
+    .digest("hex");
+  //console.log('Hashed password:', hashedPassword);
 
-//axios post backend send to the backendman aka sunny
-  const endpointUrl = 'http://localhost:3001/api/auth/login';
-  // Define the request body as a JSON object with the hashed message
-  const requestBody = { hash: hash };
-
-  // Define additional headers to include in the request
-  const headers = { 'Authorization': 'Bearer <token>' };
+  //axios post backend send to the backendman aka sunny
   // Make a POST request to the backend with the request body and headers using Axios
-  axios.post(endpointUrl, requestBody, { headers: headers })
-  .then(response => {
-    console.log('Received response:', response.data);
-  })
-  .catch(error => {
-    console.error('Error sending request:', error);
-  });
-
-//console.log('Hashed message:', hash);
-}
-
+  axios
+    .post("http://localhost:3001/api/login", {
+      username: username,
+      credentials: hashedPassword,
+    })
+    .then((response) => {
+      if (response.data.code == 200) {
+        //Something to save tokens and redirect
+      }
+    })
+    .catch((error) => {
+      console.log("Login failed, please try again");
+    });
+};
 
 function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleUsernameChange(event){
+  function handleUsernameChange(event) {
     setUsername(event.target.value);
   }
-
 
   function handlePasswordChange(event) {
     setPassword(event.target.value);
@@ -76,12 +66,12 @@ function LoginPage() {
       <h1> Sign in to the application </h1>
       <div>
         <label htmlFor="username">Username:</label>
-        <input type="text" 
-        id="username" 
-        value={username} 
-        onChange={handleUsernameChange} 
+        <input
+          type="text"
+          id="username"
+          value={username}
+          onChange={handleUsernameChange}
         />
-
       </div>
       <div>
         <label htmlFor="password">Password:</label>
@@ -93,22 +83,29 @@ function LoginPage() {
         />
       </div>
       <div>
-      <a href="" target="_blank">Forget your password?</a>
+        <a href="" target="_blank">
+          Forget your password?
+        </a>
       </div>
       <button type="Signin">SIGN IN</button>
 
-      <h1> <br/> Nice to meet you! </h1>
-      <h6> tell us a little bit about yourself <br/></h6>
+      <h1>
+        {" "}
+        <br /> Nice to meet you!{" "}
+      </h1>
+      <h6>
+        {" "}
+        tell us a little bit about yourself <br />
+      </h6>
       <h6> and start journey with us</h6>
       <div>
-        <button onClick={()=> window.location.href= "/signup"}> Sign Up </button>
+        <button onClick={() => (window.location.href = "/signup")}>
+          {" "}
+          Sign Up{" "}
+        </button>
       </div>
-
-
     </form>
   );
 }
-
-
 
 export default LoginPage;

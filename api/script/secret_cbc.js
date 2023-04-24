@@ -23,7 +23,7 @@ function encSecret(attributes, app_id) {
 }
 
 function decSecret(encrypted, iv) {
-  decipher = crypto.createDecipheriv("aes-256-cbc", secretKey, iv);
+  let decipher = crypto.createDecipheriv("aes-256-cbc", secretKey, iv);
   let decrypted = decipher.update(encrypted, "hex", "utf8");
   decrypted += decipher.final("utf8");
 
