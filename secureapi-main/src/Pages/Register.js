@@ -4,6 +4,9 @@ import axios from "axios";
 const crypto = require("crypto");
 
 function RegisterPage() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const loginfn = () => {
     //validate check whether all the form is completed
     if (!username) {
@@ -15,45 +18,9 @@ function RegisterPage() {
       console.log("Please fill in the password");
       return;
     }
-
-    //TODO Password Validate
-    function PasswordForm() {
-      const [password, setPassword] = useState('');
-      const [confirmPassword, setConfirmPassword] = useState('');
-    
-      const handleSubmit = (event) => {
-        event.preventDefault();
-    
-        if (password !== confirmPassword) {
-          alert('The Passwords is not match. Please try again.');
-        } 
-
-        
-      };
-    
-      return (
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-          <label htmlFor="confirm-password">Confirm Password:</label>
-      <input
-        type="password"
-        id="confirm-password"
-        value={confirmPassword}
-        onChange={(event) => setConfirmPassword(event.target.value)}
-      />
-
-      <button type="submit">Submit</button>
-    </form>
-  );
-}
-    
-
+    if (password != confirmPassword) {
+      console.log("Password and ConfirmPass does not match");
+    }
 
     //hash password
     let raw_pass = password;
@@ -82,9 +49,6 @@ function RegisterPage() {
         console.log("Login failed, please try again");
       });
   };
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   function handleUsernameChange(event) {
     setUsername(event.target.value);

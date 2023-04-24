@@ -93,6 +93,9 @@ router.post("/checktokens", (req, res, next) => {
 });
 
 //API Execution Set
+router.get("/oapi/get/:apiid", (req, res, next) => {
+  let apiid = req.params.apiid;
+});
 
 router.get("/test", function (req, res, next) {
   res.send("OAuth API");

@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 const mongoose = require("mongoose");
 var secureHeader = require("../script/secure_headers");
+const crypto = require("crypto");
 
 const AppSchema = require("../model/applistModel");
 const AppList = mongoose.model("applist", AppSchema, "applist");
@@ -88,7 +89,8 @@ router.post("/addapi", (req, res, next) => {
     apiName: data.apiName,
     app_id: data.app_id,
     user_id: data.user_id,
-    apiLink: data.apiLink,
+    apiLink: crypto.createHash("sha256").update(data.apiLink).digest("hex"),
+    apiPriLink: data.apiLink,
     apiMethod: data.apiMethod,
     allowedAttributes: data.allowedAttributes,
   });

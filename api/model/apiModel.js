@@ -18,6 +18,10 @@ var ApiSchema = new Schema({
     type: String,
     required: true,
   },
+  apiPriLink: {
+    type: String,
+    required: true,
+  },
   apiMethod: {
     type: String,
   },
