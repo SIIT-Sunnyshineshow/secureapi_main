@@ -1,29 +1,53 @@
 import { useState } from "react";
 
-function APIEdit() {
-  const [linkUrl, setLinkUrl] = useState("");
+function selectedOption() {}
 
-  return (
+function handleOptionChange() {}
+
+function APIEdit() {
+    const [linkUrl, setLinkUrl] = useState('');
+
+
+
+return (
+<div>
+    <h1 style={{ textAlign: "right", marginRight: "10px" }}>
+        Posting API
+    </h1>
+    <h3 style={{textAlign: "left", marginLeft: "20px"}}>
+        API Gateway <br/>
+    </h3>
     <div>
-      <h1 style={{ textAlign: "right", marginRight: "10px" }}>Posting API</h1>
-      <h3 style={{ textAlign: "left", marginLeft: "20px" }}>
-        API Gateway <br />
-      </h3>
-      <div>
-        <input
+    <input 
           type="text"
           value={linkUrl}
           onChange={(event) => setLinkUrl(event.target.value)}
         />
-
-        {linkUrl.startsWith("http") && (
+        {linkUrl.startsWith('http') && (
           <a href={linkUrl} target="_blank" rel="noopener noreferrer">
             Click here to view link
           </a>
         )}
-      </div>
     </div>
-  );
+    <h3 style={{textAlign: "left", marginLeft: "20px"}}>
+        Allowed Attributes <br/>
+    </h3>
+    <input type="text"/>
+
+
+    <h3 style={{textAlign: "left", marginLeft: "20px"}}>
+        Method <br/> </h3>
+
+        <select value={selectedOption} onChange={handleOptionChange}>
+        <option value="">Select an option</option>
+        <option value="option1">Option 1</option>
+        <option value="option2">Option 2</option>
+        <option value="option3">Option 3</option>
+      </select>
+
+
+</div>
+);
 }
 
 export default APIEdit;
