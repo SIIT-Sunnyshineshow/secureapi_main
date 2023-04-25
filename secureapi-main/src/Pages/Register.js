@@ -5,7 +5,6 @@ const crypto = require("crypto");
 
 function RegisterPage() {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const loginfn = () => {
@@ -15,10 +14,6 @@ function RegisterPage() {
       return;
     }
 
-    if (!email) {
-      console.log("Please fill in the email");
-      return;
-    }
 
     if (!password) {
       console.log("Please fill in the password");
@@ -58,10 +53,6 @@ function RegisterPage() {
 
   function handleUsernameChange(event) {
     setUsername(event.target.value);
-  }
-
-  function handleEmailChange(event) {
-    setEmail(event.target.value);
   }
 
   function handlePasswordChange(event) {
@@ -107,15 +98,7 @@ function RegisterPage() {
           onChange={handleUsernameChange}
         />
       </div>
-      <div>
-        <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={handleEmailChange}
-        />
-      </div>
+      
       <div>
         <label htmlFor="password">Password:</label>
         <input
