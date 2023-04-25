@@ -24,6 +24,10 @@ function APIList() {
           <Row>No Data to Show</Row>
         )}
       </Container>
+      <button style={{ float: "right", marginRight: "20px" }}> {" "}Attributes{" "}</button>
+      <button style={{ float: "right", marginRight: "20px" }}> {" "}Config App{" "}</button>
+
+
     </div>
   );
 }
