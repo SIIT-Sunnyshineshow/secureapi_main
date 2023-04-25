@@ -24,6 +24,7 @@ String.prototype.toObjectId = function () {
   return new ObjectId(this.toString());
 };
 
+//Secure Header
 router.use((req, res, next) => {
   secureHeader(req, res, next)
     .then((payload) => {
