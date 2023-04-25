@@ -10,6 +10,7 @@
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.2.3",
     "crypto": "^1.0.1",
+    "crypto-js": "^4.1.1",
     "dotenv": "^16.0.3",
     "jsonwebtoken": "^9.0.0",
     "react": "^18.2.0",
@@ -45,7 +46,7 @@
   "devDependencies": {
     "react-router-dom": "^6.10.0"
   },
-  "browser" : {
-    "crypto" : false
+  "browser": {
+    "crypto": false
   }
 }

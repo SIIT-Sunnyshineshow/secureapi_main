@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const crypto = require("crypto");
+import { sha256 } from 'crypto-js';
+
 
 function RegisterPage() {
   const [username, setUsername] = useState("");
@@ -20,16 +21,15 @@ function RegisterPage() {
       return;
     }
     if (password != confirmPassword) {
-      console.log("Password and ConfirmPass does not match");
+      
+      alert("Password and ConfirmPass does not match");
+      return;
     }
 
     //hash password
     let raw_pass = password;
     // Generate a SHA-256 hash of the password
-    const hashedPassword = crypto
-      .createHash("sha256")
-      .update(raw_pass)
-      .digest("hex");
+    let hashedPassword = sha256(password).toString();
     //console.log('Hashed password:', hashedPassword);
 
     //axios post backend send to the backendman aka sunny
@@ -57,6 +57,10 @@ function RegisterPage() {
 
   function handlePasswordChange(event) {
     setPassword(event.target.value);
+  }
+
+  function handleConfirmPasswordChange(event) {
+    setConfirmPassword(event.target.value);
   }
 
   function handleSubmit(event) {
@@ -108,8 +112,19 @@ function RegisterPage() {
           onChange={handlePasswordChange}
         />
       </div>
+
+      <div>
+        <label htmlFor="comfirmpassword">Comfirm Password:</label>
+        <input
+          type="password"
+          id="confirmpassword"
+          value={confirmPassword}
+          onChange={handleConfirmPasswordChange}
+        />
+      </div>
+
       <br />
-      <button type="submit">SIGN UP</button>
+      <button onClick={()=>loginfn()}>SIGN UP</button>
     </form>
   );
 }
