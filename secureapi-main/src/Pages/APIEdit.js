@@ -8,7 +8,6 @@ function APIEdit() {
     const [linkUrl, setLinkUrl] = useState('');
 
 
-
 return (
 <div>
     <h1 style={{ textAlign: "right", marginRight: "10px" }}>
@@ -33,18 +32,15 @@ return (
         Allowed Attributes <br/>
     </h3>
     <input type="text"/>
+    
 
 
     <h3 style={{textAlign: "left", marginLeft: "20px"}}>
-        Method <br/> </h3>
+        Method </h3>
+        <input type="text"/>
 
-        <select value={selectedOption} onChange={handleOptionChange}>
-        <option value="">Select an option</option>
-        <option value="option1">Option 1</option>
-        <option value="option2">Option 2</option>
-        <option value="option3">Option 3</option>
-      </select>
-
+    <br/><br/>
+    <button style={{ float: "right", marginRight: "20px" }}> {" "}Save{" "}</button>
 
 </div>
 );

@@ -1,37 +1,39 @@
 import { useState } from "react";
 
 
+
 function Attributes() {
     const [linkUrl, setLinkUrl] = useState('');
 
-
+function MyButton() {
+    const handleClick = () => {
+      console.log("Button clicked!");
+    };
+      
+        return <button onClick={handleClick}>Click me</button>;
+}
 
 return (
 <div>
     <h1 style={{ textAlign: "right", marginRight: "10px" }}>
-        Posting API
+        Attribute
     </h1>
-    <h3 style={{textAlign: "left", marginLeft: "20px"}}>
-        API Gateway <br/>
-    </h3>
-    <div>
-    <input 
-          type="text"
-          value={linkUrl}
-          onChange={(event) => setLinkUrl(event.target.value)}
-        />
-        {linkUrl.startsWith('http') && (
-          <a href={linkUrl} target="_blank" rel="noopener noreferrer">
-            Click here to view link
-          </a>
-        )}
-    </div>
-    <h3 style={{textAlign: "left", marginLeft: "20px"}}>
-        Allowed Attributes <br/>
-    </h3>
-    <input type="text"/>
 
-
+    
+    <button>User</button>
+    &nbsp;
+    <button>SpeedBird</button>
+    &nbsp;
+    <button>Admin</button>
+    &nbsp;
+    <button>Profile</button>
+    &nbsp;
+    <button>Posting</button><br/>
+    <br/>
+    <button onClick={() => (window.location.href = "/signup")}> 
+          {" "}
+          Generate Key{" "}
+        </button>
 
 </div>
 );
