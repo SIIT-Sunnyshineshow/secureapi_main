@@ -32,7 +32,7 @@ function RegisterPage() {
     //axios post backend send to the backendman aka sunny
     // Make a POST request to the backend with the request body and headers using Axios
     axios
-      .post("http://localhost:3001/api/register", {
+      .post("http://localhost:3001/api/auth/register", {
         username: username,
         credentials: hashedPassword,
       })
