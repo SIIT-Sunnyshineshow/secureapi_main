@@ -10,6 +10,7 @@ import Dashboard from "./Pages/Dashboard";
 import Home from "./Pages/Home";
 import APIList from "./Pages/APIList";
 import APIEdit from "./Pages/APIEdit";
+import Attributes from "./Pages/Attributes";
 import Test from "./Pages/Test";
 
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/APIList" element={<APIList />} />
           <Route path="/APIEdit" element={<APIEdit />} />
+          <Route path="/Attributes" element={<Attributes />} />
           <Route path="/test" element={<Test />} />
           <Route
             path="/"

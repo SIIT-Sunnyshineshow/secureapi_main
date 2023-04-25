@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 
-function Attribut() {
+function Attributes() {
     const [linkUrl, setLinkUrl] = useState('');
 
 
