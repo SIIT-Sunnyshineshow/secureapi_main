@@ -7,6 +7,13 @@ function handleOptionChange() {}
 function APIEdit() {
     const [linkUrl, setLinkUrl] = useState('');
 
+    function DropdownButton() {
+      const [selectedOption, setSelectedOption] = useState("");
+    
+      const handleOptionChange = (event) => {
+        setSelectedOption(event.target.value);
+      };
+    }
 
 return (
 <div>
@@ -37,7 +44,15 @@ return (
 
     <h3 style={{textAlign: "left", marginLeft: "20px"}}>
         Method </h3>
-        <input type="text"/>
+        <div>
+      <select value={selectedOption} onChange={handleOptionChange}>
+        <option value="">Select an option</option>
+        <option value="option1">Option 1</option>
+        <option value="option2">Option 2</option>
+        <option value="option3">Option 3</option>
+      </select>
+    
+    </div>
 
     <br/><br/>
     <button style={{ float: "right", marginRight: "20px" }}> {" "}Save{" "}</button>
