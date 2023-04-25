@@ -23,7 +23,7 @@ var secretManager = require("./routes/generator");
 const { exit } = require("process");
 
 var app = express();
-const PORT = 8080;
+const PORT = process.env.PORT || "8080";
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
