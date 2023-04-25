@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-import { sha256 } from 'crypto-js';
-
+import sha256 from "crypto-js/sha256";
 
 function RegisterPage() {
   const [username, setUsername] = useState("");
@@ -15,13 +14,11 @@ function RegisterPage() {
       return;
     }
 
-
     if (!password) {
       console.log("Please fill in the password");
       return;
     }
     if (password != confirmPassword) {
-      
       alert("Password and ConfirmPass does not match");
       return;
     }
@@ -102,7 +99,7 @@ function RegisterPage() {
           onChange={handleUsernameChange}
         />
       </div>
-      
+
       <div>
         <label htmlFor="password">Password:</label>
         <input
@@ -124,7 +121,7 @@ function RegisterPage() {
       </div>
 
       <br />
-      <button onClick={()=>loginfn()}>SIGN UP</button>
+      <button onClick={() => loginfn()}>SIGN UP</button>
     </form>
   );
 }
