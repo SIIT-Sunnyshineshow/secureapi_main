@@ -8,6 +8,8 @@ var bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 dotenv.config();
 
+const cors = require("cors");
+
 const mongoose = require("mongoose");
 var isMongoConnected = false;
 
@@ -21,7 +23,7 @@ var secretManager = require("./routes/generator");
 const { exit } = require("process");
 
 var app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = 8080;
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -44,6 +46,8 @@ app.use(function (req, res, next) {
 
   next();
 });
+
+app.use(cors());
 
 // Edit Router Overall Here
 app.use("/api/users", usersRouter);

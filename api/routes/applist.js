@@ -7,8 +7,8 @@ const crypto = require("crypto");
 const AppSchema = require("../model/applistModel");
 const AppList = mongoose.model("applist", AppSchema, "applist");
 
-// const ApiSchema = require("../model/apiModel");
-// const ApiList = mongoose.model("apilist", ApiSchema, "apilist");
+const ApiSchema = require("../model/apiModel");
+const ApiList = mongoose.model("apilist", ApiSchema, "apilist");
 
 /* GET users listing. */
 /*
@@ -18,15 +18,23 @@ refreshToken,
 sessionID
 
 */
+
+String.prototype.toObjectId = function () {
+  var ObjectId = require("mongoose").Types.ObjectId;
+  return new ObjectId(this.toString());
+};
+
 router.use((req, res, next) => {
   secureHeader(req, res, next)
     .then((payload) => {
       if (payload.code == 200) {
         next();
       } else if (payload.code == 240) {
-        //TODO Refresh and put it back into the header
-        res.append("accessToken", payload.accessToken);
-        res.append("refreshToken", payload.refreshToken);
+        res.set({
+          tokenedit: 240,
+          accesstoken: payload.accessToken,
+          refreshtoken: payload.refreshToken,
+        });
         next();
       } else {
         res.send({ code: 401, err: "Unauthorized Usage" });
@@ -45,6 +53,15 @@ router.get("/test", function (req, res, next) {
 //Check the from app, then the scope
 
 router.post("/addapp", (req, res, next) => {
+  /* Example Request
+  {
+    "appName": "Somchart App ma fav",
+    "user_id": "6446d9ce3cb6ae24ab201455",
+    "loginApi" : "www.google.com",
+    "cbLogin" : "www.google.com"
+
+  }
+  */
   let data = req.body;
 
   let sendingData = new AppList({
@@ -57,38 +74,111 @@ router.post("/addapp", (req, res, next) => {
     appSecretKey: crypto.randomBytes(32).toString("hex"),
   });
 
-  sendingData.save((err, result) => {
-    if (err) {
-      res.send({ code: 500, err: err });
-    } else {
+  sendingData
+    .save()
+    .then((resp) => {
       res.send({ code: 200 });
-    }
-  });
+    })
+    .catch((err) => {
+      res.send({ code: 500, err: err });
+    });
+});
+
+router.post("/updateapp", (req, res, next) => {
+  let data = req.body;
+  let app_id = data.app_id;
+
+  /* 
+  Required Info
+  update = {
+    appName: data.appName,
+    app_id: app_id
+    user_id: user_id,
+    loginApi: data.loginApi,
+    callbackLoginApi: data.cbLogin,
+    attributes: data.attributes,
+  };
+
+  */
+
+  //TODO
+  let _id = new mongoose.Types.ObjectId(app_id);
+  let filter = {
+    _id: _id,
+    user_id: data.user_id,
+  };
+
+  let update = {};
+
+  if (data.appName) {
+    update.appName = data.appName;
+  }
+
+  if (data.loginApi) {
+    update.loginApi = data.loginApi;
+  }
+
+  if (data.cbLogin) {
+    update.callbackLoginApi = data.cbLogin;
+  }
+
+  if (data.attributes) {
+    update.attributes = data.attributes;
+  }
+
+  update = {
+    appName: data.appName,
+    loginApi: data.loginApi,
+    callbackLoginApi: data.cbLogin,
+    attributes: data.attributes,
+  };
+
+  console.log(filter);
+
+  AppList.findOneAndUpdate(filter, update)
+    .then((docs) => {
+      res.send({ code: 200, docs_old: docs });
+    })
+    .catch((error) => {
+      res.send({ code: 400, err: error });
+    });
 });
 
 router.post("/getapp", (req, res, next) => {
+  //Require User_id
   let data = req.body;
 
-  AppList.find({ user_id: data.user_id }, (err, docs) => {
-    if (err) {
+  AppList.find({ user_id: data.user_id })
+    .then((docs) => {
+      res.send({ code: 200, payload: docs });
+    })
+    .catch((err) => {
       res.send({ code: 400, err: err });
-    }
-    res.send({ code: 200, payload: docs });
-  });
+    });
 });
 
 router.post("/getoneapp", (req, res, next) => {
   let data = req.body;
 
-  AppList.find({ _id: new mongoose.Types.ObjectId(data._id) }, (err, docs) => {
-    if (err) {
+  AppList.find({ _id: new mongoose.Types.ObjectId(data._id) })
+    .then((docs) => {
+      res.send({ code: 200, payload: docs });
+    })
+    .catch((err) => {
       res.send({ code: 400, err: err });
-    }
-    res.send({ code: 200, payload: docs });
-  });
+    });
 });
 
 router.post("/addapi", (req, res, next) => {
+  /*
+  {
+    "apiName": "TestAPI",
+    "app_id": "64474a8c93f3740ffbf6585c",
+    "user_id" : "6446d9ce3cb6ae24ab201455",
+    "apiLink": "https://api.imgflip.com/get_memes",
+    "allowedAttributes": ["Student"]
+}
+  */
   let data = req.body;
 
   let sendingData = new ApiList({
@@ -101,35 +191,42 @@ router.post("/addapi", (req, res, next) => {
     allowedAttributes: data.allowedAttributes,
   });
 
-  sendingData.save((err, result) => {
-    if (err) {
+  sendingData
+    .save()
+    .then((docs) => {
+      res.send({ code: 200, docs });
+    })
+    .catch((err) => {
       res.send({ code: 500, err: err });
-    } else {
-      res.send({ code: 200 });
-    }
-  });
+    });
 });
 
 router.post("/getapi", (req, res, next) => {
   let data = req.body;
-
-  ApiList.find({ user_id: data.user_id, app_id: data.app_id }, (err, docs) => {
-    if (err) {
+  /*
+  Required 
+    user_id,
+    app_id
+   */
+  ApiList.find({ user_id: data.user_id, app_id: data.app_id })
+    .then((docs) => {
+      res.send({ code: 200, data: docs });
+    })
+    .catch((err) => {
       res.send({ code: 400, err: err });
-    }
-    res.send({ code: 200, data: docs });
-  });
+    });
 });
 
 router.post("/getoneapi", (req, res, next) => {
   let data = req.body;
 
-  ApiList.find({ _id: new mongoose.Types.ObjectId(data._id) }, (err, docs) => {
-    if (err) {
+  ApiList.find({ _id: new mongoose.Types.ObjectId(data._id) })
+    .then((docs) => {
+      res.send({ code: 200, data: docs });
+    })
+    .catch((err) => {
       res.send({ code: 400, err: err });
-    }
-    res.send({ code: 200, data: docs });
-  });
+    });
 });
 
 router.get("/test", (req, res, next) => {

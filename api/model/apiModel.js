@@ -27,3 +27,5 @@ var ApiSchema = new Schema({
   },
   allowedAttributes: [String],
 });
+
+module.exports = ApiSchema;
