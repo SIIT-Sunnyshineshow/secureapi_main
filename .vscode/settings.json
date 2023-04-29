@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "undefined/subscriptions/6681a96a-ed83-42cf-984b-84ddd45a6437/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/secureapi-main-api-2277",
+    "appService.deploySubpath": "api"
+}
