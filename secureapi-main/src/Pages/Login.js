@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import { useEffect } from "react";
+import sha256 from "crypto-js/sha256";
 
 const crypto = require("crypto");
 
@@ -19,34 +19,36 @@ function LoginPage() {
     }
 
     //hash password
-    let raw_pass = password;
     // Generate a SHA-256 hash of the password
-    const hashedPassword = crypto
-      .createHash("sha256")
-      .update(raw_pass)
-      .digest("hex");
+    let hashedPassword = sha256(password).toString();
     //console.log('Hashed password:', hashedPassword);
 
     //axios post backend send to the backendman aka sunny
     // Make a POST request to the backend with the request body and headers using Axios
     axios
-      .post("http://localhost:3001/api/login", {
+      .post("http://localhost:8080/api/auth/login", {
         username: username,
         credentials: hashedPassword,
-        unique: uniqueId,
       })
       .then((response) => {
         if (response.data.code == 200) {
           //Something to save tokens and redirect
-          localStorage.setItem("accessToken", response.data.accessToken);
-          localStorage.setItem("refreshToken", response.data.refreshToken);
-          localStorage.setItem("sessionID ", response.data.sessionID);
-          localStorage.setItem("userId ", response.data.userId);
+          console.log(response);
+          let data = response.data;
+
+          localStorage.setItem("sessionid", data.sessionID);
+          localStorage.setItem("userid", data.user_id);
+          localStorage.setItem("username", data.username);
+          localStorage.setItem("accesstoken", data.accessToken);
+          localStorage.setItem("refreshtoken", data.refreshToken);
           window.location.replace("/dashboard");
+        } else {
+          throw new Error("Login Failed from internal server error");
         }
       })
       .catch((error) => {
-        console.log("Login failed, please try again");
+        alert("Login failed, please try again");
+        console.log(error);
       });
   };
   let uniqueId = localStorage.getItem("uniqueId");
@@ -68,6 +70,7 @@ function LoginPage() {
   function handleSubmit(event) {
     event.preventDefault();
     console.log(`Username: ${username} Password: ${password}`);
+    loginfn();
   }
 
   return (

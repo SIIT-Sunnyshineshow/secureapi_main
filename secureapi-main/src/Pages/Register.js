@@ -24,7 +24,6 @@ function RegisterPage() {
     }
 
     //hash password
-    let raw_pass = password;
     // Generate a SHA-256 hash of the password
     let hashedPassword = sha256(password).toString();
     //console.log('Hashed password:', hashedPassword);
@@ -32,19 +31,19 @@ function RegisterPage() {
     //axios post backend send to the backendman aka sunny
     // Make a POST request to the backend with the request body and headers using Axios
     axios
-      .post("http://localhost:8080/api/auth/register", {
+      .post("http://localhost:8080/api/auth/login", {
         username: username,
         credentials: hashedPassword,
       })
       .then((response) => {
         if (response.data.code == 200) {
           //Something to save tokens and redirect
-
           window.location.replace("/login");
         }
       })
       .catch((error) => {
-        console.log("Login failed, please try again");
+        alert("Login failed, please try again");
+        console.log(error);
       });
   };
 

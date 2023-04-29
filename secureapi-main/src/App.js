@@ -14,7 +14,6 @@ import Attributes from "./Pages/Attributes";
 import AppSetting from "./Pages/AppSetting";
 import Test from "./Pages/Test";
 
-
 function App() {
   return (
     <BrowserRouter>
@@ -23,7 +22,7 @@ function App() {
           <Route path="/signup" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/APIList" element={<APIList />} />
+          <Route path="/api_list" element={<APIList />} />
           <Route path="/APIEdit" element={<APIEdit />} />
           <Route path="/Attributes" element={<Attributes />} />
           <Route path="/AppSetting" element={<AppSetting />} />

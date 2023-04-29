@@ -111,7 +111,8 @@ sessionSchema.statics.loadAccess = function (sessionID, clientAccessToken) {
         }
 
         //Match?
-        let accessToken = msg.accessToken;
+        //console.log(msg);
+        let accessToken = msg.accessToken || msg.accesstoken;
         bcrypt.compare(clientAccessToken, accessToken, (err, ret) => {
           if (err) {
             console.log(err);
@@ -149,7 +150,7 @@ sessionSchema.statics.loadRefresh = function (
         }
 
         //Match?
-        let refreshToken = msg.refreshToken;
+        let refreshToken = msg.refreshToken || msg.refreshtoken;
         bcrypt.compare(clientRefreshToken, refreshToken, (err, ret) => {
           if (err) {
             console.log(err);
