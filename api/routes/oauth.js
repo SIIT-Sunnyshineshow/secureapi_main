@@ -125,6 +125,8 @@ router.get("/oapi/get/:apiid", (req, res, next) => {
   headers: OAccessToken, ORefreshToken, Aiv, Riv, app_id, user_id,channel_access
    */
 
+  console.log(req.headers);
+
   let OTokens = {
     OAccessTokenSet: req.headers.oaccesstoken,
     ORefreshTokenSet: req.headers.orefreshtoken,
@@ -155,7 +157,7 @@ router.get("/oapi/get/:apiid", (req, res, next) => {
           //API actual fetch
           let apiid = req.params.apiid;
 
-          ApiList.findOne({ apiLink: apiid }).then((docs) => {
+          ApiList.findOne({ apiLink: apiid, app_id: app_id }).then((docs) => {
             let api_link = docs.apiPriLink;
             let apiAttributes = rawSecret.attributes;
 
