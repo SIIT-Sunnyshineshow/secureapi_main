@@ -63,6 +63,7 @@ function generateORefresh(OAccessToken, user_id, secret) {
 function validateORefresh(
   ORefreshToken,
   OAccessToken,
+  OAccessR,
   user_id,
   appdata,
   channel_access
@@ -89,8 +90,11 @@ function validateORefresh(
         reject({ code: 401, err: "Who are you?" });
       }
 
-      if (rawToken.OAccessToken != OAccessToken) {
-        reject({ code: 403, err: "Invalid uses of refresh token" });
+      if (OAccessToken != OAccessR) {
+        reject({
+          code: 403,
+          err: "Invalid Access Token used detected in refresh token",
+        });
       }
 
       let rawSecret = decSecret(rawToken.secret, channel_access);
@@ -121,7 +125,7 @@ function validateOAccess(OAccessToken, user_id, appdata, channel_access) {
         //Validate ORefresh
         //if it's available, Refresh the Token
         //Duty of Express
-        resolve({ code: 240 });
+        resolve({ code: 240, OAccessToken });
       }
 
       let decipher = crypto.createDecipheriv(
@@ -186,6 +190,7 @@ function checkOTokens(OTokens, appdata, user_id, channel_access) {
           validateORefresh(
             ORefreshTokenSet,
             OAccessTokenSet,
+            res.OAccessToken,
             user_id,
             appdata,
             channel_access

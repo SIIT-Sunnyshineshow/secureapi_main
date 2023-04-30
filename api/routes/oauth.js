@@ -1,4 +1,5 @@
 const axios = require("axios");
+const jwt = require("jsonwebtoken");
 var express = require("express");
 var router = express.Router();
 const mongoose = require("mongoose");
@@ -168,7 +169,13 @@ router.get("/oapi/get/:apiid", (req, res, next) => {
             axios
               .get(api_link)
               .then((response) => {
-                res.send({ code: 200, data: response.data });
+                res.send({
+                  code: 200,
+                  channel_access,
+                  data: jwt.sign(response.data, channel_access, {
+                    expiresIn: "300s",
+                  }),
+                });
               })
               .catch((error) => {
                 res.send({ code: 400, err: error });
