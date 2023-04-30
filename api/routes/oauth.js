@@ -125,8 +125,6 @@ router.get("/oapi/get/:apiid", (req, res, next) => {
   headers: OAccessToken, ORefreshToken, Aiv, Riv, app_id, user_id,channel_access
    */
 
-  console.log(req.headers);
-
   let OTokens = {
     OAccessTokenSet: req.headers.oaccesstoken,
     ORefreshTokenSet: req.headers.orefreshtoken,
@@ -173,7 +171,6 @@ router.get("/oapi/get/:apiid", (req, res, next) => {
               .then((response) => {
                 res.send({
                   code: 200,
-                  channel_access,
                   data: jwt.sign(response.data, channel_access, {
                     expiresIn: "300s",
                   }),
