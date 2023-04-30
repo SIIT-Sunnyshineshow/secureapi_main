@@ -23,9 +23,9 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/api_list" element={<APIList />} />
-          <Route path="/APIEdit" element={<APIEdit />} />
+          <Route path="/api_edit" element={<APIEdit />} />
           <Route path="/Attributes" element={<Attributes />} />
-          <Route path="/AppSetting" element={<AppSetting />} />
+          <Route path="/app_setting" element={<AppSetting />} />
           <Route path="/test" element={<Test />} />
           <Route
             path="/"

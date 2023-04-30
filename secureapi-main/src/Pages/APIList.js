@@ -90,15 +90,26 @@ function APIList() {
             <Row key={item._id} style={{ margin: "10px" }}>
               <Col>
                 {" "}
-                <Card>
-                  <Card.Header>{item.apiName}</Card.Header>
-                  <Card.Body>
-                    Attribute:
-                    {item.allowedAttributes.map((attrib) => (
-                      <div key={attrib}>{attrib}</div>
-                    ))}
-                  </Card.Body>
-                </Card>
+                <button
+                  style={{
+                    width: "100%",
+                    backgroundColor: "white",
+                    border: "none",
+                  }}
+                  onClick={() =>
+                    window.location.replace("/api_edit?api_id=" + item._id)
+                  }
+                >
+                  <Card>
+                    <Card.Header>{item.apiName}</Card.Header>
+                    <Card.Body>
+                      Attribute:
+                      {item.allowedAttributes.map((attrib) => (
+                        <div key={attrib}>{attrib}</div>
+                      ))}
+                    </Card.Body>
+                  </Card>
+                </button>
               </Col>
             </Row>
           ))
@@ -107,11 +118,21 @@ function APIList() {
         )}
       </Container>
       <div>
-        <button style={{ float: "right", marginRight: "20px" }}>
-          {" "}
-          Attributes{" "}
+        <button
+          style={{ float: "right", marginRight: "20px" }}
+          onClick={() => window.location.replace("/dashboard")}
+        >
+          Back
         </button>
-        <button style={{ float: "right", marginRight: "20px" }}>
+        <button
+          style={{ float: "right", marginRight: "20px" }}
+          onClick={() =>
+            window.location.replace(
+              "/app_setting?app_id=" +
+                new URLSearchParams(window.location.search).get("app_id")
+            )
+          }
+        >
           {" "}
           Config App{" "}
         </button>
