@@ -30,7 +30,7 @@ function generateOAccess(user_id, secret) {
     { OAccessToken: encrypted, iv: iv.toString("hex") },
     OACCESS_JWT_SECRET,
     {
-      expiresIn: "1d",
+      expiresIn: "180s",
     }
   );
 }
@@ -55,7 +55,7 @@ function generateORefresh(OAccessToken, user_id, secret) {
     { ORefreshToken: encrypted, iv: iv.toString("hex") },
     OREFRESH_JWT_SECRET,
     {
-      expiresIn: "7d",
+      expiresIn: "1d",
     }
   );
 }

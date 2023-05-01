@@ -1,0 +1,23 @@
+*ต้องลง nodejs ก่อนเพื่อรันโปรแกรม
+https://nodejs.org/en
+
+เปิด Service
+1) ใช้ Terminal/Windows Powershell เปิดไปที่ ./api
+2) พิมพ์ว่า npm install (เฉพาะตอนรันครั้งแรก)
+3) npm start
+
+ถ้ารันถูกต้อง จะต้องขึ้น Output ว่า
+Connecting MongoDB
+MongoDB Connected
+Server is loading on port 8080
+
+เปิด Front-end (เพื่อดูระบบได้ง่ายขึ้น)
+1) ใช้ Terminal/Windows Powershell เปิดไปที่ ./secureapi-main
+2) พิมพ์ว่า npm install (เฉพาะตอนรันครั้งแรก)
+3) npm start
+
+ถ้ารันถูกต้องหน้าเว็บจะต้องเด้งขึ้นมา 
+ในกรณีที่เปิดหลายหน้าเว็บ แล้วมีขึ้นมาว่าแอปนี้จะให้รันในพอร์ตอื่น ให้กด y
+
+username: Sunnyshineshow
+Password: Sunnyshineshow
